@@ -1,4 +1,4 @@
-# Rebus.TODO
+# Rebus.Ninject
 
 Provides an <WHAT> for [Rebus](https://github.com/rebus-org/Rebus).
 
