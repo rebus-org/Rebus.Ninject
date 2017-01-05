@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Ninject;
 using Rebus.Activation;
 using Rebus.Bus;
+using Rebus.Bus.Advanced;
 using Rebus.Extensions;
 using Rebus.Handlers;
 using Rebus.Pipeline;
@@ -25,6 +26,7 @@ namespace Rebus.Ninject
         /// </summary>
         public NinjectContainerAdapter(IKernel kernel)
         {
+            if (kernel == null) throw new ArgumentNullException(nameof(kernel));
             _kernel = kernel;
         }
 
@@ -52,6 +54,8 @@ namespace Rebus.Ninject
         public void SetBus(IBus bus)
         {
             _kernel.Bind<IBus>().ToConstant(bus);
+
+            _kernel.Bind<ISyncBus>().ToMethod(c => bus.Advanced.SyncBus);
 
             _kernel.Bind<IMessageContext>().ToMethod(c =>
             {
