@@ -27,8 +27,7 @@ namespace Rebus.Ninject
         /// </summary>
         public NinjectContainerAdapter(IKernel kernel)
         {
-            if (kernel == null) throw new ArgumentNullException(nameof(kernel));
-            _kernel = kernel;
+            _kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
         }
 
         /// <summary>
@@ -54,6 +53,11 @@ namespace Rebus.Ninject
         /// </summary>
         public void SetBus(IBus bus)
         {
+            if (_kernel.CanResolve(typeof(IBus)))
+            {
+                throw new InvalidOperationException("Cannot register IBus because it has already been registered. If you want to host multiple Rebus instances in a single process, please use separate container instances for them.");
+            }
+
             _kernel.Bind<IBus>().ToConstant(bus);
 
             _kernel.Bind<ISyncBus>().ToMethod(c => bus.Advanced.SyncBus);
