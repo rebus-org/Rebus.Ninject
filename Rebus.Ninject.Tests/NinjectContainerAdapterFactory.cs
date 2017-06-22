@@ -5,44 +5,80 @@ using System.Reflection;
 using Ninject;
 using Rebus.Activation;
 using Rebus.Bus;
+using Rebus.Config;
 using Rebus.Handlers;
 using Rebus.Tests.Contracts.Activation;
 
 namespace Rebus.Ninject.Tests
 {
-    public class NinjectContainerAdapterFactory : IContainerAdapterFactory
+    public class NinjectContainerAdapterFactory : IActivationContext
     {
-        readonly StandardKernel _kernel = new StandardKernel();
-
-        public IHandlerActivator GetActivator()
+        public IHandlerActivator CreateActivator(Action<IHandlerRegistry> configureHandlers, out IActivatedContainer container)
         {
-            return new NinjectContainerAdapter(_kernel);
+            var kernel = new StandardKernel();
+            configureHandlers(new HandlerRegistry(kernel));
+
+            container = new ActivatedContainer(kernel);
+
+            return new NinjectContainerAdapter(kernel);
         }
 
-        public void RegisterHandlerType<THandler>() where THandler : class, IHandleMessages
+        public IBus CreateBus(Action<IHandlerRegistry> configureHandlers, Func<RebusConfigurer, RebusConfigurer> configureBus, out IActivatedContainer container)
         {
-            _kernel.Bind(GetHandlerInterfaces<THandler>().ToArray())
-                .To<THandler>()
-                .InTransientScope();
+            var kernel = new StandardKernel();
+            configureHandlers(new HandlerRegistry(kernel));
+
+            container = new ActivatedContainer(kernel);
+
+            return configureBus(Configure.With(new NinjectContainerAdapter(kernel))).Start();
         }
 
-        static IEnumerable<Type> GetHandlerInterfaces<THandler>() where THandler : class, IHandleMessages
+        private class HandlerRegistry : IHandlerRegistry
         {
+            private readonly StandardKernel _kernel;
+
+            public HandlerRegistry(StandardKernel kernel)
+            {
+                _kernel = kernel;
+            }
+
+            public IHandlerRegistry Register<THandler>() where THandler : class, IHandleMessages
+            {
+                _kernel.Bind(GetHandlerInterfaces<THandler>().ToArray())
+                    .To<THandler>()
+                    .InTransientScope();
+
+                return this;
+            }
+
+            static IEnumerable<Type> GetHandlerInterfaces<THandler>() where THandler : class, IHandleMessages
+            {
 #if NETSTANDARD1_6
-            return typeof(THandler).GetTypeInfo().GetInterfaces().Where(i => i.GetTypeInfo().IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandleMessages<>));
+                return typeof(THandler).GetTypeInfo().GetInterfaces().Where(i => i.GetTypeInfo().IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandleMessages<>));
 #else
             return typeof(THandler).GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandleMessages<>));
 #endif
+            }
         }
 
-        public void CleanUp()
+        private class ActivatedContainer : IActivatedContainer
         {
-            _kernel.Dispose();
-        }
+            private readonly StandardKernel _kernel;
 
-        public IBus GetBus()
-        {
-            return ResolutionExtensions.Get<IBus>(_kernel);
+            public ActivatedContainer(StandardKernel kernel)
+            {
+                _kernel = kernel;
+            }
+
+            public void Dispose()
+            {
+                _kernel.Dispose();
+            }
+
+            public IBus ResolveBus()
+            {
+                return ResolutionExtensions.Get<IBus>(_kernel);
+            }
         }
     }
 }
