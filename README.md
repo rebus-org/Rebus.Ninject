@@ -8,4 +8,4 @@ Provides a Ninject container adapter for [Rebus](https://github.com/rebus-org/Re
 
 ---
 
-
+_Attention users of ASP.NET MVC5_: You are probably planning on using the `Ninject.MVC5` package to integration your Ninject container with your web application, but unfortunately (at least at the time of writing) the package depends on version 3 of Ninject, where Rebus.Ninject depends on the upcoming version 4 (because it supports .NET Core).
