@@ -17,8 +17,8 @@
 * Add .NET Core support
 * Update contracts dep - thanks [trevorreeves]
 
-## 5.0.0
-* Update to Rebus 6 - thanks [erenes]
+## 5.0.0-beta1
+* Update to Rebus 6 and Ninject 4 - thanks [erenes]
 
 [erenes]: https://github.com/erenes
 [trevorreeves]: https://github.com/trevorreeves
