@@ -37,7 +37,7 @@ namespace Rebus.Ninject
         {
             var handlerInstances = GetAllHandlerInstances<TMessage>();
 
-            transactionContext.OnDisposed(() =>
+            transactionContext.OnDisposed(_ =>
             {
                 foreach (var disposableInstance in handlerInstances.OfType<IDisposable>())
                 {

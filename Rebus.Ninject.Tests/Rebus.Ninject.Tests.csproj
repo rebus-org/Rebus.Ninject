@@ -5,7 +5,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Rebus.Ninject.Tests</RootNamespace>
     <AssemblyName>Rebus.Ninject.Tests</AssemblyName>
-    <TargetFrameworks>net45;netstandard1.6</TargetFrameworks>
+    <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -31,11 +31,14 @@
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
     <DefineConstants>NETSTANDARD1_6</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <DefineConstants>NETSTANDARD2_0</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rebus.Ninject\Rebus.Ninject.csproj" />
     <PackageReference Include="ninject" Version="4.0.0-beta-0134" />
-    <PackageReference Include="nunit" Version="3.7.1" />
-    <PackageReference Include="rebus" Version="4.0.0" />
-    <PackageReference Include="rebus.tests.contracts" Version="4.0.0" />
+    <PackageReference Include="nunit" Version="3.12.0" />
+    <PackageReference Include="rebus" Version="6.0.0" />
+    <PackageReference Include="rebus.tests.contracts" Version="6.0.0" />
   </ItemGroup>
 </Project>
