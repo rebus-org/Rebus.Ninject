@@ -21,8 +21,5 @@
 * Update to Rebus 6
 * Update Ninject dep to 3.3.0
 
-## 5.0.0-beta1
-* Update to Rebus 6 and Ninject 4 - thanks [erenes]
-
 [erenes]: https://github.com/erenes
 [trevorreeves]: https://github.com/trevorreeves
